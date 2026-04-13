@@ -300,7 +300,7 @@ export default function Platform2CaseStudy() {
 
         </div>{/* end content key wrapper */}
 
-        <div style={{ marginTop: 32, paddingTop: 20, borderTop: "1px solid " + C.s2, textAlign: "center" }}><p style={{ fontSize: 11, color: C.t3 }}>Platform 2.0 · Mosey · Designed by Tulcy · 2025</p></div>
+        <div style={{ marginTop: 32, paddingTop: 20, borderTop: "1px solid " + C.s2, textAlign: "center" }}><p style={{ fontSize: 11, color: C.t3 }}>Platform 2.0 · Mosey · Designed by Tulcy · 2026</p></div>
 
       </div>
     </GradBg>
