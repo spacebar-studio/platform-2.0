@@ -98,6 +98,1320 @@ var OUTCOMES = [{ metric: "35%", label: "Reduction in time-to-triage", desc: "Dr
 
 var OUTCOMES_QUAL = ["Significant improvement in cross-functional alignment across finance, HR, and legal — shared visibility into the same home surface reduced internal back-and-forth", "Increased platform engagement and session depth — the contextual sidebar drove discovery of product surfaces that users previously had low awareness of", "Helped position Mosey's platform as a unified compliance operating system — not just a collection of tools, but a single surface tying together task resolution, location management, automation, legislation, and employee resources", "Enabled more confident multi-state scaling — teams reported the state filter bar and sidebar setup modules gave them confidence to expand into new states"];
 
+// ─── Design System Colors (Interface) ──────────────────────────────────
+var DS = {
+  bg: "#F8FAFC", wh: "#FFFFFF", s1: "#F1F5F9", s2: "#E2E8F0", s3: "#CBD5E1",
+  bd: "#E2E8F0", bL: "#F1F5F9",
+  t1: "#1E293B", t2: "#64748B", t3: "#94A3B8",
+  teal: "#36B5A0", tealB: "rgba(54,181,160,.06)", tealD: "rgba(54,181,160,.18)",
+  amber: "#E6A34D", amberB: "rgba(230,163,77,.08)", amberD: "rgba(230,163,77,.20)",
+  green: "#4CAF7D", greenB: "rgba(76,175,125,.08)", greenD: "rgba(76,175,125,.20)",
+  blue: "#5B8BD4", blueB: "rgba(91,139,212,.08)", blueD: "rgba(91,139,212,.20)",
+  purple: "#7B6CC4", purpleB: "rgba(123,108,196,.08)", purpleD: "rgba(123,108,196,.20)",
+  rose: "#D4697A", roseB: "rgba(212,105,122,.06)", roseD: "rgba(212,105,122,.18)",
+  red: "#C05050", redB: "rgba(192,80,80,.08)", redD: "rgba(192,80,80,.20)",
+};
+
+// ─── Design System Page ────────────────────────────────────────────────
+function DesignSystemPage() {
+  var secState = useState("overview");
+  var dsSec = secState[0]; var setDsSec = secState[1];
+  var hovState = useState(null);
+  var navHov = hovState[0]; var setNavHov = hovState[1];
+  var btnHovState = useState(null);
+  var btnHov = btnHovState[0]; var setBtnHov = btnHovState[1];
+  var loadState = useState(false);
+  var loading = loadState[0]; var setLoading = loadState[1];
+  var tabDemoState = useState("All");
+  var tabDemoActive = tabDemoState[0]; var setTabDemoActive = tabDemoState[1];
+  var filterState = useState("all");
+  var activeFilter = filterState[0]; var setActiveFilter = filterState[1];
+  var expandState = useState(null);
+  var expandId = expandState[0]; var setExpandId = expandState[1];
+  var inputState = useState("");
+  var inputVal = inputState[0]; var setInputVal = inputState[1];
+  var togState = useState(false);
+  var toggled = togState[0]; var setToggled = togState[1];
+
+  var DS_CATS = [
+    { cat: "Overview", items: [{ id: "overview", la: "Introduction" }] },
+    { cat: "Foundations", items: [
+      { id: "principles", la: "Design Principles" },
+      { id: "colors", la: "Color Palette" },
+      { id: "typography", la: "Typography" },
+      { id: "spacing", la: "Spacing Scale" },
+      { id: "borders", la: "Borders & Radius" },
+      { id: "shadows", la: "Shadows & Elevation" },
+      { id: "iconography", la: "Iconography" }
+    ]},
+    { cat: "Components", items: [
+      { id: "comp-state-pills", la: "State Filter Pills" },
+      { id: "comp-kpi", la: "KPI Card" },
+      { id: "comp-activity", la: "Activity Card" },
+      { id: "comp-task", la: "Task Row" },
+      { id: "comp-button", la: "Button" },
+      { id: "comp-badge", la: "Badge" },
+      { id: "comp-card", la: "Card" },
+      { id: "comp-filter", la: "Filter Toolbar" },
+      { id: "comp-sidebar", la: "Sidebar Module" },
+      { id: "comp-banner", la: "Policy Banner" },
+      { id: "comp-input", la: "Form Input" }
+    ]},
+    { cat: "Motion", items: [
+      { id: "motion", la: "Motion & Animation" }
+    ]},
+    { cat: "Patterns", items: [
+      { id: "layouts", la: "Layout System" },
+      { id: "navigation", la: "Navigation" },
+      { id: "datahierarchy", la: "Data Hierarchy" },
+      { id: "feedback", la: "Feedback & States" }
+    ]},
+    { cat: "Guidelines", items: [
+      { id: "usage", la: "Usage Rules" },
+      { id: "accessibility", la: "Accessibility" }
+    ]}
+  ];
+
+  var SH2 = { fontSize: 12, color: C.ro, fontWeight: 600, marginBottom: 10, textTransform: "uppercase", letterSpacing: ".06em", fontFamily: FT };
+
+  function DSCard(props) {
+    return <div className={props.anim ? "fu" : ""} style={{ padding: props.p || "16px 18px", background: DS.wh, border: "1px solid " + (props.bc || DS.bd), borderRadius: 10, marginBottom: props.mb || 14, transition: "all .25s", ...props.style }}>{props.children}</div>;
+  }
+
+  function DSSwatch(props) {
+    var isH = navHov === "sw-" + props.name;
+    return <div onMouseEnter={function() { setNavHov("sw-" + props.name); }} onMouseLeave={function() { setNavHov(null); }}
+      style={{ background: DS.wh, border: "1px solid " + (isH ? DS.roseD : DS.bd), borderRadius: 10, overflow: "hidden", cursor: "pointer", transition: "all 0.2s", transform: isH ? "translateY(-2px)" : "translateY(0)" }}>
+      <div style={{ height: 52, background: props.hex, position: "relative" }}>
+        {isH && <div className="fi" style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.35)", fontSize: 11, color: "#fff", fontFamily: MN, fontWeight: 500 }}>{props.hex}</div>}
+      </div>
+      <div style={{ padding: "8px 10px" }}>
+        <div style={{ fontSize: 11, fontWeight: 600, color: DS.t1, fontFamily: FT }}>{props.name}</div>
+        <div style={{ fontSize: 10, color: DS.t3, fontFamily: FT, marginTop: 2 }}>{props.desc}</div>
+      </div>
+    </div>;
+  }
+
+  function DSBadge(props) {
+    var colors = { success: DS.green, warning: DS.amber, critical: DS.red, info: DS.blue, processing: DS.purple, neutral: DS.t3, active: DS.teal };
+    var col = colors[props.type] || DS.t3;
+    return <span style={{ display: "inline-flex", alignItems: "center", fontSize: 10, fontWeight: 600, padding: "2px 8px", borderRadius: 4, background: col + "18", color: col, textTransform: "uppercase", letterSpacing: "0.3px", fontFamily: FT, whiteSpace: "nowrap" }}>{props.children}</span>;
+  }
+
+  function DSBtn(props) {
+    var isPrimary = props.primary;
+    var isActive = props.active;
+    var isSm = props.sm;
+    var isHov = btnHov === props.id;
+    return <button
+      onMouseEnter={function() { setBtnHov(props.id); }}
+      onMouseLeave={function() { setBtnHov(null); }}
+      onClick={props.onClick}
+      style={{
+        padding: isSm ? "3px 10px" : "7px 16px",
+        fontSize: isSm ? 11 : 13,
+        fontWeight: isPrimary || isActive ? 600 : 500,
+        fontFamily: FT,
+        border: isPrimary ? "none" : "1px solid " + (isActive ? DS.tealD : DS.bd),
+        borderRadius: props.pill ? 9999 : 8,
+        background: isPrimary ? (isHov ? "#2DA593" : DS.teal) : isActive ? DS.tealB : isHov ? DS.s1 : "#fff",
+        color: isPrimary ? "#fff" : isActive ? DS.teal : DS.t1,
+        cursor: props.disabled ? "not-allowed" : "pointer",
+        transition: "all .15s ease",
+        opacity: props.disabled ? 0.4 : loading && props.loading ? 0.6 : 1,
+        ...props.style
+      }}>
+      {loading && props.loading ? <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><span style={{ width: 12, height: 12, border: "2px solid rgba(255,255,255,.3)", borderTopColor: "#fff", borderRadius: "50%", display: "inline-block", animation: "fu .7s linear infinite" }} />Loading...</span> : props.children}
+    </button>;
+  }
+
+  function DSKpi(props) {
+    return <div style={{ flex: 1, minWidth: 0, padding: "10px 14px", background: DS.s1, border: "1px solid " + DS.bd, borderRadius: 8 }}>
+      <div style={{ fontSize: 10, fontWeight: 600, color: DS.t3, textTransform: "uppercase", letterSpacing: ".06em", fontFamily: FT, marginBottom: 4 }}>{props.label}</div>
+      <div style={{ fontSize: 18, fontWeight: 600, color: DS.t1, fontFamily: FT, lineHeight: 1 }}>{props.value}</div>
+      {props.sub && <div style={{ fontSize: 10, color: DS.t3, fontFamily: FT, marginTop: 4 }}>{props.sub}</div>}
+    </div>;
+  }
+
+  // ── Content rendering ──
+  var content = null;
+
+  // ── Overview ──
+  if (dsSec === "overview") {
+    var sections = [
+      { id: "principles", la: "Design Principles", de: "5 core principles guiding Platform 2.0 — from command-center thinking to adaptive role support.", cat: "Foundations" },
+      { id: "colors", la: "Color Palette", de: "7 semantic color families with surface tones, text hierarchy, and status-mapped variants.", cat: "Foundations" },
+      { id: "typography", la: "Typography", de: "Outfit + JetBrains Mono typefaces, 11-step type scale from 9px to 28px.", cat: "Foundations" },
+      { id: "spacing", la: "Spacing Scale", de: "Gap, padding, and margin scales plus 9 border-radius tokens.", cat: "Foundations" },
+      { id: "comp-state-pills", la: "Component Library", de: "11 interactive components — State Pills, KPIs, Activity Cards, Task Rows, Buttons, Badges, and more.", cat: "Components" },
+      { id: "motion", la: "Motion & Animation", de: "Entrance animations, hover transitions, continuous loops, and staggered entry patterns.", cat: "Motion" },
+      { id: "layouts", la: "Patterns & Layout", de: "Two-panel app shell, navigation patterns, data hierarchy, and feedback states.", cat: "Patterns" },
+      { id: "usage", la: "Usage Rules", de: "Consolidated do's and don'ts for color, typography, components, motion, and layout.", cat: "Guidelines" }
+    ];
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <DSCard anim glass bc={C.ro + "25"} style={{ padding: "24px 28px" }} mb={24}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+          <MoseyLogo size={36} />
+          <div>
+            <div style={{ fontSize: 20, fontWeight: 600, color: DS.t1, letterSpacing: "-0.3px" }}>Platform 2.0 Design System</div>
+            <div style={{ fontSize: 12, color: DS.t2, fontFamily: FT, marginTop: 2 }}>The visual language for Mosey's compliance operating system</div>
+          </div>
+        </div>
+        <div style={{ fontSize: 13, color: DS.t2, fontFamily: FT, lineHeight: 1.6 }}>This design system documents every visual token, component, animation, and guideline used across the Platform 2.0 interface. It serves as the single source of truth for building consistent, warm, and accessible compliance technology. Every element is interactive — hover, click, and explore to see components in their real states.</div>
+      </DSCard>
+
+      <div style={SH2}>What's Inside</div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 24 }}>
+        {[
+          { ti: "Foundations", ct: "7 sections", de: "Color palette, typography, spacing, borders, shadows, and iconography.", ic: DS.teal, items: ["Principles", "Colors", "Typography", "Spacing", "Borders", "Shadows", "Icons"] },
+          { ti: "Components", ct: "11 components", de: "Every UI building block with live interactive demos and all variants.", ic: DS.blue, items: ["State Pills", "KPI", "Activity Card", "Task Row", "Button", "Badge", "Card", "Filter", "Sidebar", "Banner", "Input"] },
+          { ti: "Motion & Patterns", ct: "5 sections", de: "Animations, layouts, navigation, data hierarchy, and feedback.", ic: DS.purple, items: ["Animations", "Layout", "Navigation", "Data Hierarchy", "Feedback"] }
+        ].map(function(s, i) {
+          return <DSCard key={i} anim style={{ cursor: "pointer", padding: "16px 18px" }} onClick={function() { setDsSec(s.items[0] === "Principles" ? "principles" : s.items[0] === "State Pills" ? "comp-state-pills" : "motion"); }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+              <div style={{ width: 10, height: 10, borderRadius: "50%", background: s.ic }} />
+              <div style={{ fontSize: 14, fontWeight: 600, color: DS.t1 }}>{s.ti}</div>
+              <div style={{ fontSize: 10, color: DS.t3, marginLeft: "auto", fontFamily: MN }}>{s.ct}</div>
+            </div>
+            <div style={{ fontSize: 11, color: DS.t2, fontFamily: FT, lineHeight: 1.5, marginBottom: 10 }}>{s.de}</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>{s.items.map(function(item, j) { return <span key={j} style={{ fontSize: 9, padding: "2px 8px", background: s.ic + "14", color: s.ic, borderRadius: 9999, fontWeight: 500 }}>{item}</span>; })}</div>
+          </DSCard>;
+        })}
+      </div>
+
+      <div style={SH2}>Quick Stats</div>
+      <div style={{ display: "flex", gap: 10, marginBottom: 24 }}>
+        <DSKpi label="Colors" value="28" sub="tokens" />
+        <DSKpi label="Components" value="11" sub="primitives" />
+        <DSKpi label="Type Sizes" value="11" sub="scale steps" />
+        <DSKpi label="Animations" value="8" sub="keyframes" />
+        <DSKpi label="Sections" value="22" sub="across 6 categories" />
+      </div>
+
+      <div style={SH2}>How to Use</div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        {[
+          ["Browse the Sidebar", "Navigate sections using the left panel. Categories group related tokens and components together."],
+          ["Interact with Components", "Components are live — hover buttons, click tabs, trigger loading states. See every state in context."],
+          ["Review Guidelines", "Usage Rules and Accessibility sections provide do's and don'ts for consistent implementation."],
+          ["Markdown Reference", "A companion design-system.md file lives alongside the codebase with the full token reference."]
+        ].map(function(item, i) {
+          return <DSCard key={i} anim>
+            <div style={{ fontSize: 13, fontWeight: 600, color: DS.t1, marginBottom: 4 }}>{item[0]}</div>
+            <div style={{ fontSize: 11, color: DS.t2, fontFamily: FT, lineHeight: 1.5 }}>{item[1]}</div>
+          </DSCard>;
+        })}
+      </div>
+    </div>;
+  }
+
+  // ── Design Principles ──
+  if (dsSec === "principles") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>Design Principles</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 24, lineHeight: 1.6 }}>The foundational principles that guide every design decision in Platform 2.0.</p>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 24 }}>
+        {[
+          ["Command Center Over Task List", "The home surface is an active operational hub, not a passive to-do list. Users see everything — tasks, locations, automations, legislation — in a single adaptive surface.", DS.teal],
+          ["Context Always Visible", "Location setup status, active automations, new legislation, and employee resources are always one glance away in the persistent contextual sidebar.", DS.blue],
+          ["Filter to Focus", "Users cut through complexity by status, category, assignment, and state — every filter combination produces a meaningful, actionable view.", DS.purple],
+          ["Every Item Is a Doorway", "Every task, location, legislation item, and resource link navigates into its full product experience. The dashboard is a launchpad, not a destination.", DS.amber],
+          ["Adaptive to Role and Moment", "The dashboard serves the morning triage, the urgent escalation, and the weekly review equally well. Information density adapts to the operating mode.", DS.rose]
+        ].map(function(p, i) {
+          return <DSCard key={i} anim style={{ borderLeft: "3px solid " + p[2], padding: 16 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>{p[0]}</div>
+            <p style={{ fontSize: 12, color: DS.t2, lineHeight: 1.6, margin: 0 }}>{p[1]}</p>
+          </DSCard>;
+        })}
+      </div>
+      <DSCard anim mb={20}>
+        <div style={SH2}>Visual Design Philosophy</div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+          {[
+            ["Light & Warm", "Warm cream backgrounds and white cards create a clean, approachable feel. The interface is professional without being cold or clinical."],
+            ["Clean Typography", "Outfit for all UI text provides excellent legibility at dashboard densities. JetBrains Mono for data creates scannable numeric columns."],
+            ["Semantic Color", "Status colors are consistent and meaningful — teal for active, green for complete, amber for warning, red for overdue. Every color earns its use."]
+          ].map(function(item, i) {
+            return <div key={i} style={{ padding: 14, background: DS.s1, borderRadius: 8, border: "1px solid " + DS.bd }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: DS.teal, marginBottom: 6, fontFamily: FT }}>{item[0]}</div>
+              <p style={{ fontSize: 11, color: DS.t2, lineHeight: 1.5, margin: 0 }}>{item[1]}</p>
+            </div>;
+          })}
+        </div>
+      </DSCard>
+      <DSCard anim>
+        <div style={SH2}>Information Hierarchy</div>
+        <p style={{ fontSize: 12, color: DS.t1, lineHeight: 1.6, marginBottom: 14 }}>Platform 2.0 uses a consistent four-level information hierarchy.</p>
+        <div style={{ display: "flex", gap: 10 }}>
+          {[
+            ["L1: KPI Summary", "At-a-glance status counts for instant awareness", "22px / 600wt"],
+            ["L2: Activity Feed", "Chronological cards with status borders and context", "13px / cards"],
+            ["L3: Task List", "Filterable task rows with rich metadata", "13px / rows"],
+            ["L4: Sidebar Context", "Persistent modules for location, automation, legislation", "Panels / links"]
+          ].map(function(item, i) {
+            return <div key={i} style={{ flex: 1, padding: 12, background: DS.s1, borderRadius: 8, border: "1px solid " + DS.bd, borderTop: "2px solid " + DS.teal }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: DS.teal, marginBottom: 4, fontFamily: FT }}>{item[0]}</div>
+              <p style={{ fontSize: 11, color: DS.t2, lineHeight: 1.4, margin: 0, marginBottom: 4 }}>{item[1]}</p>
+              <span style={{ fontSize: 10, color: DS.t3, fontFamily: MN }}>{item[2]}</span>
+            </div>;
+          })}
+        </div>
+      </DSCard>
+    </div>;
+  }
+
+  // ── Color Palette ──
+  if (dsSec === "colors") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>Color Palette</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 24, lineHeight: 1.6 }}>Hover over any swatch to reveal its hex value. Colors are organized by function.</p>
+
+      <div style={SH2}>Backgrounds & Surfaces</div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 10, marginBottom: 24 }}>
+        <DSSwatch name="bg" hex={DS.bg} desc="Page background" />
+        <DSSwatch name="wh" hex={DS.wh} desc="Cards, surfaces" />
+        <DSSwatch name="s1" hex={DS.s1} desc="Subtle shade" />
+        <DSSwatch name="s2" hex={DS.s2} desc="Medium shade" />
+      </div>
+
+      <div style={SH2}>Text Hierarchy</div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10, marginBottom: 24 }}>
+        <DSSwatch name="t1" hex={DS.t1} desc="Primary text" />
+        <DSSwatch name="t2" hex={DS.t2} desc="Secondary text" />
+        <DSSwatch name="t3" hex={DS.t3} desc="Tertiary text" />
+      </div>
+
+      <div style={SH2}>Semantic Status Colors</div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 10, marginBottom: 24 }}>
+        <DSSwatch name="Teal" hex={DS.teal} desc="Active / In Progress" />
+        <DSSwatch name="Green" hex={DS.green} desc="Success / Complete" />
+        <DSSwatch name="Amber" hex={DS.amber} desc="Warning / Action Req" />
+        <DSSwatch name="Red" hex={DS.red} desc="Error / Overdue" />
+        <DSSwatch name="Blue" hex={DS.blue} desc="New / Info" />
+      </div>
+
+      <div style={SH2}>Accent & Brand</div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10, marginBottom: 24 }}>
+        <DSSwatch name="Purple" hex={DS.purple} desc="Processing status" />
+        <DSSwatch name="Rose" hex={DS.rose} desc="CTA / Brand accent" />
+        <DSSwatch name="Border" hex={DS.bd} desc="Default border" />
+      </div>
+
+      <div style={SH2}>Color Application</div>
+      <p style={{ fontSize: 12, color: DS.t1, lineHeight: 1.6, marginBottom: 14 }}>Each semantic color has three variants for layered usage:</p>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 10, marginBottom: 24 }}>
+        {[
+          ["Teal", DS.teal, DS.tealB, DS.tealD],
+          ["Amber", DS.amber, DS.amberB, DS.amberD],
+          ["Green", DS.green, DS.greenB, DS.greenD],
+          ["Red", DS.red, DS.redB, DS.redD],
+          ["Blue", DS.blue, DS.blueB, DS.blueD]
+        ].map(function(c) {
+          return <div key={c[0]} style={{ background: "#fff", borderRadius: 10, border: "1px solid " + DS.bd, overflow: "hidden" }}>
+            <div style={{ padding: "8px 10px", fontSize: 11, fontWeight: 600, color: c[1], fontFamily: FT }}>{c[0]}</div>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div style={{ padding: "10px 12px", background: c[1] }}><span style={{ fontSize: 10, color: "#fff", fontFamily: MN, fontWeight: 600 }}>Foreground</span></div>
+              <div style={{ padding: "10px 12px", background: c[2], borderTop: "1px solid " + DS.bd }}><span style={{ fontSize: 10, color: c[1], fontFamily: MN }}>Background</span></div>
+              <div style={{ padding: "10px 12px", background: "transparent", borderTop: "1px solid " + c[3] }}><span style={{ fontSize: 10, color: c[1], fontFamily: MN }}>Border</span></div>
+            </div>
+          </div>;
+        })}
+      </div>
+
+      <DSCard anim>
+        <div style={SH2}>Usage Rules</div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+          {[
+            ["Status Mapping", "Teal = Active/In Progress, Green = Completed, Amber = Warning/Action Required, Red = Overdue/Error, Blue = New, Purple = Processing."],
+            ["Contrast", "Primary text (#1A1D1F) on white backgrounds maintains WCAG AAA (15.4:1). Use t2 for secondary, t3 only for captions."],
+            ["Backgrounds", "Never use semantic foreground colors as backgrounds directly. Use the B (background) variant at 6-8% opacity."],
+            ["Left Borders", "Activity cards use 3px left borders in status colors to create scannable visual lanes in the feed."]
+          ].map(function(r, i) {
+            return <div key={i} style={{ padding: 12, background: DS.s1, borderRadius: 8, border: "1px solid " + DS.bd }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: DS.teal, marginBottom: 4, fontFamily: FT }}>{r[0]}</div>
+              <p style={{ fontSize: 11, color: DS.t2, lineHeight: 1.5, margin: 0 }}>{r[1]}</p>
+            </div>;
+          })}
+        </div>
+      </DSCard>
+    </div>;
+  }
+
+  // ── Typography ──
+  if (dsSec === "typography") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>Typography</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 24, lineHeight: 1.6 }}>Platform 2.0 uses two typefaces, each serving a distinct functional purpose.</p>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 24 }}>
+        <DSCard anim>
+          <div style={{ fontSize: 11, fontWeight: 600, color: DS.teal, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>Primary: Outfit</div>
+          <div style={{ fontSize: 28, fontWeight: 700, color: DS.t1, marginBottom: 4, fontFamily: FT }}>Aa Bb Cc 123</div>
+          <div style={{ fontSize: 14, fontWeight: 400, color: DS.t2, marginBottom: 12, fontFamily: FT }}>ABCDEFGHIJKLMNOPQRSTUVWXYZ</div>
+          <p style={{ fontSize: 11, color: DS.t3, lineHeight: 1.5 }}>Used for all UI text — headers, labels, buttons, body text, navigation. Clean, legible at all dashboard densities.</p>
+          <div style={{ marginTop: 12, display: "flex", gap: 4, flexWrap: "wrap" }}>
+            <DSBadge type="active">Headers</DSBadge><DSBadge type="active">Labels</DSBadge><DSBadge type="active">Body</DSBadge><DSBadge type="active">Navigation</DSBadge><DSBadge type="active">Buttons</DSBadge>
+          </div>
+        </DSCard>
+        <DSCard anim>
+          <div style={{ fontSize: 11, fontWeight: 600, color: DS.teal, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>Monospace: JetBrains Mono</div>
+          <div style={{ fontSize: 28, fontWeight: 500, color: DS.t1, marginBottom: 4, fontFamily: MN }}>Aa Bb Cc 123</div>
+          <div style={{ fontSize: 14, fontWeight: 400, color: DS.t2, marginBottom: 12, fontFamily: MN }}>0123456789 — : /</div>
+          <p style={{ fontSize: 11, color: DS.t3, lineHeight: 1.5 }}>Used for dates, timestamps, counts, IDs, and numeric data. Monospace creates scannable columns and precise alignment.</p>
+          <div style={{ marginTop: 12, display: "flex", gap: 4, flexWrap: "wrap" }}>
+            <DSBadge type="neutral">Dates</DSBadge><DSBadge type="neutral">IDs</DSBadge><DSBadge type="neutral">Counts</DSBadge><DSBadge type="neutral">Timestamps</DSBadge>
+          </div>
+        </DSCard>
+      </div>
+
+      <div style={SH2}>Type Scale</div>
+      <DSCard anim style={{ padding: 0, overflow: "hidden" }} mb={24}>
+        {[
+          [28, "Page header", 600, FT, DS.t1, "Home, section titles"],
+          [22, "Section title", 600, FT, DS.t1, "KPI values, modal titles"],
+          [20, "Screen title", 600, FT, DS.t1, "Detail headers"],
+          [18, "Subsection", 600, FT, DS.t1, "Card section headers"],
+          [16, "Body large", 600, FT, DS.t1, "Prominent labels"],
+          [14, "Body", 500, FT, DS.t1, "Task titles, card headers"],
+          [13, "Body default", 400, FT, DS.t2, "Descriptions, body copy"],
+          [12, "Caption", 400, FT, DS.t2, "Secondary labels, timestamps"],
+          [11, "Small", 500, FT, DS.t2, "Buttons, filter chips"],
+          [10, "Micro", 600, FT, DS.t3, "Badges, KPI labels, uppercase"],
+          [9, "Tiny", 400, FT, DS.t3, "Chart labels, axis text"]
+        ].map(function(t, i) {
+          return <div key={i} style={{ display: "flex", alignItems: "center", padding: "12px 16px", borderBottom: "1px solid " + DS.bd, gap: 16, transition: "background 0.12s" }}
+            onMouseEnter={function(e) { e.currentTarget.style.background = DS.s1; }}
+            onMouseLeave={function(e) { e.currentTarget.style.background = "transparent"; }}>
+            <div style={{ width: 50, fontSize: 10, color: DS.t3, fontFamily: MN, textAlign: "right" }}>{t[0]}px</div>
+            <div style={{ flex: 1, fontSize: t[0], fontWeight: t[2], fontFamily: t[3], color: t[4], lineHeight: 1.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{t[1]}</div>
+            <div style={{ width: 80, fontSize: 10, color: DS.t3, fontFamily: MN }}>{t[2]} wt</div>
+            <div style={{ width: 180, fontSize: 10, color: DS.t3 }}>{t[5]}</div>
+          </div>;
+        })}
+      </DSCard>
+
+      <div style={SH2}>Font Weights</div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 10, marginBottom: 24 }}>
+        {[
+          [300, "Light", "Hero text, decorative"],
+          [400, "Regular", "Body text, descriptions"],
+          [500, "Medium", "Buttons, default labels"],
+          [600, "Semibold", "Headers, KPIs, emphasis"],
+          [700, "Bold", "Page titles, metrics"]
+        ].map(function(w, i) {
+          return <DSCard key={i} anim>
+            <div style={{ fontSize: 24, fontWeight: w[0], color: DS.t1, marginBottom: 8, fontFamily: FT }}>Ag</div>
+            <div style={{ fontSize: 11, fontWeight: 600, color: DS.teal, fontFamily: FT }}>{w[0]} {w[1]}</div>
+            <div style={{ fontSize: 10, color: DS.t3, marginTop: 3 }}>{w[2]}</div>
+          </DSCard>;
+        })}
+      </div>
+    </div>;
+  }
+
+  // ── Spacing ──
+  if (dsSec === "spacing") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>Spacing Scale</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 24, lineHeight: 1.6 }}>Spacing is applied consistently using a base-4 scale. Visual examples show gap measurements.</p>
+      <div style={SH2}>Gap Scale (Flex/Grid)</div>
+      <DSCard anim mb={24}>
+        {[4, 6, 8, 10, 12, 16, 20, 24, 32, 48].map(function(g, i) {
+          return <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 0", borderBottom: "1px solid " + DS.bd }}>
+            <div style={{ width: 50, fontSize: 11, fontWeight: 600, color: DS.teal, fontFamily: MN, textAlign: "right" }}>{g}px</div>
+            <div style={{ display: "flex", gap: g }}>
+              <div style={{ width: 20, height: 20, background: DS.tealB, border: "1px solid " + DS.tealD, borderRadius: 4 }} />
+              <div style={{ width: 20, height: 20, background: DS.tealB, border: "1px solid " + DS.tealD, borderRadius: 4 }} />
+              <div style={{ width: 20, height: 20, background: DS.tealB, border: "1px solid " + DS.tealD, borderRadius: 4 }} />
+            </div>
+            <div style={{ fontSize: 10, color: DS.t3 }}>
+              {g <= 6 ? "Tight" : g <= 10 ? "Default" : g <= 16 ? "Comfortable" : g <= 24 ? "Spacious" : "Generous"}
+            </div>
+          </div>;
+        })}
+      </DSCard>
+      <div style={SH2}>Padding Patterns</div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10, marginBottom: 24 }}>
+        {[
+          ["2px 8px", "Badge"], ["3px 10px", "Small button"], ["5px 14px", "Tab button"],
+          ["7px 16px", "Button default"], ["10px 14px", "KPI card"], ["14px 16px", "Card default"],
+          ["16px 20px", "Section"], ["28px 48px", "Page content"], ["36px 40px", "Modal"]
+        ].map(function(p, i) {
+          return <div key={i} style={{ background: "#fff", borderRadius: 10, border: "1px solid " + DS.bd, overflow: "hidden" }}>
+            <div style={{ padding: p[0], background: DS.tealB, border: "1px dashed " + DS.tealD, margin: 8, borderRadius: 6 }}>
+              <div style={{ background: DS.s1, borderRadius: 4, padding: 6, fontSize: 10, color: DS.t3, fontFamily: MN, textAlign: "center" }}>{p[0]}</div>
+            </div>
+            <div style={{ padding: "6px 10px", borderTop: "1px solid " + DS.bd }}>
+              <div style={{ fontSize: 10, color: DS.t2 }}>{p[1]}</div>
+            </div>
+          </div>;
+        })}
+      </div>
+    </div>;
+  }
+
+  // ── Borders & Radius ──
+  if (dsSec === "borders") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>Borders & Radius</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 24, lineHeight: 1.6 }}>Platform 2.0 uses a progressive radius system — smaller values for interactive elements, larger for containers.</p>
+      <div style={SH2}>Border Radius Scale</div>
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 24 }}>
+        {[
+          [2, "Micro"], [4, "Badge"], [6, "Small"], [8, "Button"], [10, "Card"],
+          [16, "Modal"], [20, "Pill tab"], [9999, "Full pill"], ["50%", "Circle"]
+        ].map(function(r, i) {
+          return <div key={i} style={{ textAlign: "center" }}>
+            <div style={{ width: 52, height: 52, background: DS.tealB, border: "2px solid " + DS.teal, borderRadius: r[0], margin: "0 auto 6px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: DS.teal, fontFamily: MN }}>{typeof r[0] === "number" ? (r[0] > 100 ? "pill" : r[0] + "px") : r[0]}</div>
+            <div style={{ fontSize: 10, color: DS.t3 }}>{r[1]}</div>
+          </div>;
+        })}
+      </div>
+      <div style={SH2}>Border Styles</div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+        {[
+          ["Default", "1px solid " + DS.bd, "Card borders, dividers"],
+          ["Accent", "1px solid " + DS.tealD, "Active cards, focus states"],
+          ["Status Left", "3px solid " + DS.teal, "Activity card left border"]
+        ].map(function(b, i) {
+          return <DSCard key={i} anim style={{ borderLeft: i === 2 ? b[1] : undefined, border: i < 2 ? b[1] : undefined }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: DS.t1, marginBottom: 4 }}>{b[0]}</div>
+            <div style={{ fontSize: 10, color: DS.t3, fontFamily: MN, marginBottom: 4 }}>{b[1]}</div>
+            <div style={{ fontSize: 10, color: DS.t2 }}>{b[2]}</div>
+          </DSCard>;
+        })}
+      </div>
+    </div>;
+  }
+
+  // ── Shadows ──
+  if (dsSec === "shadows") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>Shadows & Elevation</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 24, lineHeight: 1.6 }}>Platform 2.0 uses subtle shadows sparingly. Depth is communicated through surface color, not heavy shadows.</p>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 24 }}>
+        {[
+          ["Level 0 — Flat", "none", "Default cards, inline elements"],
+          ["Level 1 — Raised", "0 2px 8px rgba(45,31,26,.06)", "Hover states, nav items"],
+          ["Level 2 — Elevated", "0 8px 24px rgba(45,31,26,.1)", "Dropdowns, popovers"],
+          ["Level 3 — Overlay", "0 20px 60px rgba(45,31,26,.15)", "Modals, full overlays"]
+        ].map(function(s, i) {
+          return <DSCard key={i} anim>
+            <div style={{ fontSize: 12, fontWeight: 600, color: DS.t1, marginBottom: 8 }}>{s[0]}</div>
+            <div style={{ display: "flex", justifyContent: "center", padding: 20 }}>
+              <div style={{ width: 140, padding: 16, background: "#fff", borderRadius: 10, border: "1px solid " + DS.bd, boxShadow: s[1], textAlign: "center" }}>
+                <div style={{ fontSize: 11, color: DS.t2 }}>Element</div>
+              </div>
+            </div>
+            <div style={{ fontSize: 10, color: DS.teal, fontFamily: MN }}>{s[1] || "none"}</div>
+            <div style={{ fontSize: 10, color: DS.t3, marginTop: 2 }}>{s[2]}</div>
+          </DSCard>;
+        })}
+      </div>
+    </div>;
+  }
+
+  // ── Iconography ──
+  if (dsSec === "iconography") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>Iconography</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 24, lineHeight: 1.6 }}>Platform 2.0 uses simple, outlined icons in the sidebar navigation and inline status indicators throughout the interface.</p>
+      <div style={SH2}>Navigation Icons</div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 10, marginBottom: 24 }}>
+        {[
+          ["⊞", "Home Dashboard", "Primary landing, task feed"], ["◎", "Locations", "State management, setup"],
+          ["◈", "Calendar", "Timeline views"], ["⟁", "Tasks", "Task management"],
+          ["◧", "Mail / Mailroom", "Communications"], ["⬡", "Team", "People, assignments"],
+          ["◉", "Search", "Global search"], ["⚙", "Settings", "Configuration"]
+        ].map(function(ic, i) {
+          return <DSCard key={i} anim style={{ textAlign: "center", padding: 16 }}>
+            <div style={{ fontSize: 24, marginBottom: 6, color: i === 0 ? DS.rose : DS.t2 }}>{ic[0]}</div>
+            <div style={{ fontSize: 11, fontWeight: 600, color: DS.t1, marginBottom: 2 }}>{ic[1]}</div>
+            <div style={{ fontSize: 10, color: DS.t3 }}>{ic[2]}</div>
+          </DSCard>;
+        })}
+      </div>
+      <div style={SH2}>Status Indicators</div>
+      <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+        {[
+          ["New", DS.blue, "●"], ["In Progress", DS.teal, "●"], ["Action Required", DS.amber, "▲"],
+          ["Completed", DS.green, "✓"], ["Overdue", DS.red, "●"], ["Processing", DS.purple, "●"]
+        ].map(function(s, i) {
+          return <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={{ color: s[1], fontSize: 12 }}>{s[2]}</span>
+            <span style={{ fontSize: 11, color: DS.t2 }}>{s[0]}</span>
+          </div>;
+        })}
+      </div>
+    </div>;
+  }
+
+  // ── Component: State Filter Pills ──
+  if (dsSec === "comp-state-pills") {
+    var states = ["All", "Alabama", "Alaska", "California", "Delaware", "Colorado"];
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>State Filter Pills</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 16, lineHeight: 1.6 }}>Horizontal pill-based state selector that scopes the entire dashboard view.</p>
+      <DSCard anim mb={16}>
+        <div style={SH2}>Interactive Demo</div>
+        <p style={{ fontSize: 12, color: DS.t1, lineHeight: 1.6, marginBottom: 16 }}>Click pills to switch active state. The "All" pill uses a filled teal background.</p>
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 16 }}>
+          {states.map(function(s) {
+            var isA = tabDemoActive === s;
+            return <button key={s} onClick={function() { setTabDemoActive(s); }}
+              onMouseEnter={function(e) { if (!isA) e.currentTarget.style.background = DS.s1; }}
+              onMouseLeave={function(e) { if (!isA) e.currentTarget.style.background = "#fff"; }}
+              style={{
+                padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: isA ? 600 : 400,
+                border: isA ? "none" : "1px solid " + DS.bd, cursor: "pointer", fontFamily: FT,
+                background: isA ? DS.teal : "#fff", color: isA ? "#fff" : DS.t2,
+                transition: "all .2s", display: "flex", alignItems: "center", gap: 6
+              }}>
+              {s !== "All" && <span style={{ fontSize: 14 }}>🏛</span>}
+              {s}
+            </button>;
+          })}
+          <button style={{ padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: 400, border: "1px solid " + DS.bd, cursor: "pointer", fontFamily: FT, background: "#fff", color: DS.t2 }}>39 more ▾</button>
+        </div>
+        <div style={{ padding: 12, background: DS.s1, borderRadius: 8, border: "1px solid " + DS.bd }}>
+          <span style={{ fontSize: 12, color: DS.t1 }}>Selected: </span>
+          <span style={{ fontSize: 12, color: DS.teal, fontWeight: 600 }}>{tabDemoActive}</span>
+        </div>
+      </DSCard>
+      <DSCard anim>
+        <div style={SH2}>States & Specs</div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+          {[
+            ["Active (All)", "background: " + DS.teal + ", color: #fff, fontWeight: 600, no border"],
+            ["Active (State)", "background: " + DS.teal + ", color: #fff, state icon prefix"],
+            ["Inactive", "background: #fff, border: 1px solid bd, color: t2"],
+            ["Hover", "background: s1, subtle lift"],
+            ["Overflow", "'39 more ▾' dropdown trigger"],
+            ["Layout", "Horizontal flex, gap: 6px, overflow: scroll on mobile"]
+          ].map(function(s, i) {
+            return <div key={i} style={{ padding: 10, background: DS.s1, borderRadius: 8, border: "1px solid " + DS.bd }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: DS.teal, marginBottom: 4, fontFamily: FT }}>{s[0]}</div>
+              <p style={{ fontSize: 10, color: DS.t3, lineHeight: 1.4, margin: 0, fontFamily: MN }}>{s[1]}</p>
+            </div>;
+          })}
+        </div>
+      </DSCard>
+    </div>;
+  }
+
+  // ── Component: KPI Card ──
+  if (dsSec === "comp-kpi") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>KPI Card</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 16, lineHeight: 1.6 }}>Key Performance Indicator cards for at-a-glance status metrics in the Recent Activity row.</p>
+      <DSCard anim mb={16}>
+        <div style={SH2}>Variants</div>
+        <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
+          {[
+            { icon: "📄", color: DS.blue, num: "2", label: "New" },
+            { icon: "⏳", color: DS.teal, num: "2", label: "In Progress" },
+            { icon: "⚠", color: DS.amber, num: "1", label: "Action Required" },
+            { icon: "✓", color: DS.green, num: "1", label: "Completed" }
+          ].map(function(k, i) {
+            return <div key={i} style={{ flex: 1, padding: "14px 16px", background: "#fff", border: "1px solid " + DS.bd, borderRadius: 10, display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: k.color + "14", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, color: k.color }}>{k.icon}</div>
+              <div>
+                <div style={{ fontSize: 22, fontWeight: 600, color: DS.t1, lineHeight: 1 }}>{k.num}</div>
+                <div style={{ fontSize: 12, color: DS.t2, marginTop: 2 }}>{k.label}</div>
+              </div>
+            </div>;
+          })}
+        </div>
+        <div style={{ padding: 12, background: DS.s1, borderRadius: 8, border: "1px solid " + DS.bd }}>
+          <div style={{ fontSize: 10, fontWeight: 600, color: DS.t3, marginBottom: 6 }}>USAGE RULES</div>
+          <p style={{ fontSize: 11, color: DS.t2, lineHeight: 1.5, margin: 0 }}>Place KPI rows at the top of the dashboard for instant situational awareness. Use 3-5 KPIs per row. Each KPI has a status-colored icon, large numeric value, and descriptive label. Values should be concise counts.</p>
+        </div>
+      </DSCard>
+    </div>;
+  }
+
+  // ── Component: Activity Card ──
+  if (dsSec === "comp-activity") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>Activity Card</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 16, lineHeight: 1.6 }}>Chronological activity feed cards with color-coded left borders indicating status.</p>
+      <DSCard anim mb={16}>
+        <div style={SH2}>Status Variants</div>
+        <p style={{ fontSize: 12, color: DS.t1, lineHeight: 1.6, marginBottom: 16 }}>Each card uses a 3px left border color to signal status. Click the expand chevron to see detail.</p>
+        {[
+          { border: DS.amber, icon: "⚠", title: "Additional Documentation Required", cat: "HR", time: "2 hours ago", desc: "Delaware Secretary of State Filing needs signatory forms", tag: "Delaware Secretary of State Filing", date: "2025-01-22" },
+          { border: DS.green, icon: "✓", title: "Registration Complete", cat: "Entity", time: "4 hours ago", desc: "Nevada Foreign Qualification has been successfully processed", tag: "Nevada Foreign Qualification", date: "2025-01-21" },
+          { border: DS.blue, icon: "📄", title: "New Registration Received", cat: "Tax", time: "1 day ago", desc: "Florida Corporate Registration submitted for processing", tag: "Florida Corporate Registration", date: "2025-01-19" },
+          { border: DS.purple, icon: "⏳", title: "Registration Processing Started", cat: "Payroll", time: "3 days ago", desc: "California Payroll Registration moved to processing phase", tag: "California Payroll Registration", date: "2025-01-22" }
+        ].map(function(card, i) {
+          var isExp = expandId === "act-" + i;
+          return <div key={i} className="fu" style={{ background: "#fff", border: "1px solid " + DS.bd, borderLeft: "3px solid " + card.border, borderRadius: "0 10px 10px 0", padding: "14px 16px", marginBottom: 8, transition: "all .2s", animationDelay: i * 0.08 + "s" }}
+            onMouseEnter={function(e) { e.currentTarget.style.boxShadow = "0 2px 8px rgba(45,31,26,.06)"; }}
+            onMouseLeave={function(e) { e.currentTarget.style.boxShadow = "none"; }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 14, color: card.border }}>{card.icon}</span>
+              <div style={{ flex: 1, fontSize: 14, fontWeight: 500, color: DS.t1 }}>{card.title}</div>
+              <span style={{ fontSize: 10, padding: "2px 8px", background: DS.s1, borderRadius: 4, color: DS.t2, fontWeight: 500 }}>{card.cat}</span>
+              <span style={{ fontSize: 11, color: DS.t3 }}>{card.time}</span>
+              <span onClick={function() { setExpandId(isExp ? null : "act-" + i); }}
+                style={{ fontSize: 12, color: DS.t3, cursor: "pointer", transition: "transform .2s", transform: isExp ? "rotate(180deg)" : "rotate(0deg)", display: "inline-block" }}>▾</span>
+            </div>
+            {isExp && <div className="fi" style={{ marginTop: 10, paddingTop: 10, borderTop: "1px solid " + DS.bd }}>
+              <p style={{ fontSize: 12, color: DS.t2, margin: "0 0 8px" }}>{card.desc}</p>
+              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                <span style={{ fontSize: 10, padding: "3px 8px", background: DS.s1, borderRadius: 6, color: DS.t2 }}>{card.tag}</span>
+                <span style={{ fontSize: 11, color: DS.t3, fontFamily: MN }}>⏱ {card.date}</span>
+              </div>
+            </div>}
+          </div>;
+        })}
+      </DSCard>
+    </div>;
+  }
+
+  // ── Component: Task Row ──
+  if (dsSec === "comp-task") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>Task Row</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 16, lineHeight: 1.6 }}>Filterable task rows with status indicators, assignee badges, due dates, and state labels.</p>
+      <DSCard anim mb={16}>
+        <div style={SH2}>Interactive Demo</div>
+        <p style={{ fontSize: 12, color: DS.t1, lineHeight: 1.6, marginBottom: 16 }}>Hover rows to see highlight state. Each row contains status dot, title, description, assignee, due date, and state.</p>
+        {[
+          { status: DS.teal, title: "California Payroll Tax Withholding Deposit", desc: "You must report wages and payroll taxes by filing the Quarterly Contribution Return...", assignee: "You", due: "Due tomorrow", state: "California" },
+          { status: DS.red, title: "Delaware Annual Franchise Tax Filing", desc: "File annual report and pay franchise tax to Delaware Division of Corporations...", assignee: "You", due: "Due yesterday", state: "Delaware" },
+          { status: DS.amber, title: "New York Workers Comp Insurance Renewal", desc: "Renew workers compensation insurance coverage for NY employees...", assignee: "Sarah M.", due: "Due in 7 days", state: "New York" }
+        ].map(function(task, i) {
+          return <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "12px 14px", border: "1px solid " + DS.bd, borderRadius: 10, marginBottom: 8, cursor: "pointer", transition: "all .15s" }}
+            onMouseEnter={function(e) { e.currentTarget.style.background = DS.s1; e.currentTarget.style.borderColor = DS.tealD; }}
+            onMouseLeave={function(e) { e.currentTarget.style.background = "#fff"; e.currentTarget.style.borderColor = DS.bd; }}>
+            <div style={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid " + task.status, marginTop: 4, flexShrink: 0 }} />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 13, fontWeight: 500, color: DS.t1, marginBottom: 2 }}>{task.title}</div>
+              <div style={{ fontSize: 12, color: DS.t3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{task.desc}</div>
+              <div style={{ display: "flex", gap: 8, marginTop: 6, alignItems: "center" }}>
+                <span style={{ fontSize: 11, color: task.due.includes("yesterday") ? DS.red : task.due.includes("tomorrow") ? DS.amber : DS.t3 }}>{task.due}</span>
+                <span style={{ fontSize: 11, color: DS.t3 }}>{task.state}</span>
+              </div>
+            </div>
+            <span style={{ fontSize: 10, padding: "3px 8px", background: DS.tealB, color: DS.teal, borderRadius: 4, fontWeight: 600, flexShrink: 0 }}>{task.assignee}</span>
+          </div>;
+        })}
+      </DSCard>
+    </div>;
+  }
+
+  // ── Component: Button ──
+  if (dsSec === "comp-button") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>Button</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 16, lineHeight: 1.6 }}>Primary and secondary buttons with small and pill variants. Hover to see interactive states.</p>
+      <DSCard anim mb={16}>
+        <div style={SH2}>Variants & States</div>
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: DS.t3, marginBottom: 8 }}>Primary (CTA)</div>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <DSBtn primary id="p1">Start</DSBtn>
+            <DSBtn primary sm id="p2">Apply</DSBtn>
+            <DSBtn primary id="p3" style={{ background: DS.rose }}>Start <span style={{ marginLeft: 4, background: "rgba(255,255,255,.3)", padding: "1px 6px", borderRadius: 4, fontSize: 10 }}>2</span></DSBtn>
+          </div>
+        </div>
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: DS.t3, marginBottom: 8 }}>Secondary (Default)</div>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <DSBtn id="s1">Filter by</DSBtn>
+            <DSBtn sm id="s2">Bulk edit</DSBtn>
+            <DSBtn id="s3">View more</DSBtn>
+          </div>
+        </div>
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: DS.t3, marginBottom: 8 }}>Active State</div>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <DSBtn active id="a1">Active</DSBtn>
+            <DSBtn sm active id="a2">Selected</DSBtn>
+            <DSBtn id="a3">Inactive</DSBtn>
+          </div>
+        </div>
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: DS.t3, marginBottom: 8 }}>Loading State</div>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <DSBtn primary id="load1" loading onClick={function() { setLoading(true); setTimeout(function() { setLoading(false); }, 2000); }}>
+              {loading ? "Loading..." : "Click to Load"}
+            </DSBtn>
+            <DSBtn id="load2" disabled>Disabled</DSBtn>
+          </div>
+        </div>
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: DS.t3, marginBottom: 8 }}>Pill Variant</div>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <DSBtn pill id="pill1" active>All</DSBtn>
+            <DSBtn pill id="pill2">Assigned to me</DSBtn>
+            <DSBtn pill sm id="pill3">HR</DSBtn>
+          </div>
+        </div>
+        <div style={{ padding: 12, background: DS.s1, borderRadius: 8, border: "1px solid " + DS.bd }}>
+          <div style={{ fontSize: 10, fontWeight: 600, color: DS.t3, marginBottom: 6 }}>USAGE RULES</div>
+          <p style={{ fontSize: 11, color: DS.t2, lineHeight: 1.5, margin: 0 }}>Use primary (teal or rose fill) for the single most important action. Use secondary (border only) for all other actions. Use sm variant in dense contexts. Use pill variant for filter tags. Max one primary button per visual group.</p>
+        </div>
+      </DSCard>
+    </div>;
+  }
+
+  // ── Component: Badge ──
+  if (dsSec === "comp-badge") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>Badge</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 16, lineHeight: 1.6 }}>Status and category indicators with semantic color mapping.</p>
+      <DSCard anim mb={16}>
+        <div style={SH2}>Status Badges</div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16, alignItems: "center" }}>
+          <DSBadge type="success">Completed</DSBadge>
+          <DSBadge type="active">In Progress</DSBadge>
+          <DSBadge type="warning">Action Required</DSBadge>
+          <DSBadge type="critical">Overdue</DSBadge>
+          <DSBadge type="info">New</DSBadge>
+          <DSBadge type="processing">Processing</DSBadge>
+          <DSBadge type="neutral">Inactive</DSBadge>
+        </div>
+        <div style={SH2}>Category Badges</div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16, alignItems: "center" }}>
+          {["HR", "Entity", "Tax", "Payroll", "Legal", "Insurance"].map(function(cat) {
+            return <span key={cat} style={{ fontSize: 10, fontWeight: 500, padding: "3px 10px", background: DS.s1, borderRadius: 4, color: DS.t2, display: "inline-flex", alignItems: "center", gap: 4 }}>
+              <span style={{ fontSize: 12 }}>🏛</span> {cat}
+            </span>;
+          })}
+        </div>
+        <div style={{ padding: 12, background: DS.s1, borderRadius: 8, border: "1px solid " + DS.bd }}>
+          <div style={{ fontSize: 10, fontWeight: 600, color: DS.t3, marginBottom: 6 }}>USAGE RULES</div>
+          <p style={{ fontSize: 11, color: DS.t2, lineHeight: 1.5, margin: 0 }}>Use status badges for system states (completed, overdue, etc.). Use category badges for domain labels (HR, Tax, Payroll). Status badges use semantic colors at 8% opacity backgrounds. Category badges use neutral s1 backgrounds. Always uppercase. Max 2 badges per item.</p>
+        </div>
+      </DSCard>
+    </div>;
+  }
+
+  // ── Component: Card ──
+  if (dsSec === "comp-card") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>Card</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 16, lineHeight: 1.6 }}>Primary container component with static, clickable, glass, and accent variants.</p>
+      <DSCard anim mb={16}>
+        <div style={SH2}>Variants</div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 16 }}>
+          <DSCard>
+            <div style={{ fontSize: 12, fontWeight: 600, color: DS.t1, marginBottom: 4 }}>Default Card</div>
+            <p style={{ fontSize: 11, color: DS.t2, lineHeight: 1.4, margin: 0 }}>White background, standard border.</p>
+          </DSCard>
+          <DSCard glass>
+            <div style={{ fontSize: 12, fontWeight: 600, color: DS.t1, marginBottom: 4 }}>Glass Card</div>
+            <p style={{ fontSize: 11, color: DS.t2, lineHeight: 1.4, margin: 0 }}>Frosted glass with backdrop blur.</p>
+          </DSCard>
+          <DSCard bc={DS.tealD}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: DS.t1, marginBottom: 4 }}>Accent Border</div>
+            <p style={{ fontSize: 11, color: DS.t2, lineHeight: 1.4, margin: 0 }}>Teal border for emphasis.</p>
+          </DSCard>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 16 }}>
+          <DSCard style={{ borderLeft: "3px solid " + DS.amber }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: DS.amber, marginBottom: 4 }}>Warning Border</div>
+            <p style={{ fontSize: 11, color: DS.t2, lineHeight: 1.4, margin: 0 }}>Left-accent for status.</p>
+          </DSCard>
+          <DSCard style={{ borderLeft: "3px solid " + DS.green }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: DS.green, marginBottom: 4 }}>Success Border</div>
+            <p style={{ fontSize: 11, color: DS.t2, lineHeight: 1.4, margin: 0 }}>Activity card pattern.</p>
+          </DSCard>
+          <DSCard style={{ padding: 0, overflow: "hidden" }}>
+            <div style={{ padding: "10px 14px", borderBottom: "1px solid " + DS.bd }}><span style={{ fontSize: 12, fontWeight: 600, color: DS.t1 }}>Header Card</span></div>
+            <div style={{ padding: 14 }}><p style={{ fontSize: 11, color: DS.t2, lineHeight: 1.4, margin: 0 }}>Card with header section.</p></div>
+          </DSCard>
+        </div>
+        <div style={{ padding: 12, background: DS.s1, borderRadius: 8, border: "1px solid " + DS.bd }}>
+          <div style={{ fontSize: 10, fontWeight: 600, color: DS.t3, marginBottom: 6 }}>USAGE RULES</div>
+          <p style={{ fontSize: 11, color: DS.t2, lineHeight: 1.5, margin: 0 }}>Cards are the primary grouping container. Use left-border color for activity feed status. Use bc prop for accent borders. Glass variant for gradient backgrounds only. Animate entry with the anim prop. Never nest cards more than one level deep.</p>
+        </div>
+      </DSCard>
+    </div>;
+  }
+
+  // ── Component: Filter Toolbar ──
+  if (dsSec === "comp-filter") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>Filter Toolbar</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 16, lineHeight: 1.6 }}>Multi-dimensional filter system with dropdown, dismissible chips, bulk edit toggle, and Start button with count.</p>
+      <DSCard anim mb={16}>
+        <div style={SH2}>Interactive Demo</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: "#fff", border: "1px solid " + DS.bd, borderRadius: 10, marginBottom: 16 }}>
+          <DSBtn id="filter-btn" sm>Filter by ▾</DSBtn>
+          <div style={{ display: "flex", gap: 4 }}>
+            {["Assigned to me", "HR"].map(function(chip, i) {
+              return <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 11, padding: "3px 8px", background: DS.tealB, border: "1px solid " + DS.tealD, borderRadius: 6, color: DS.teal, fontWeight: 500 }}>
+                {chip}
+                <span style={{ cursor: "pointer", opacity: 0.6, fontSize: 10 }}>✕</span>
+              </span>;
+            })}
+          </div>
+          <div style={{ flex: 1 }} />
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={{ fontSize: 12, color: DS.t2 }}>Bulk edit</span>
+            <div onClick={function() { setToggled(!toggled); }} style={{ width: 36, height: 20, borderRadius: 10, background: toggled ? DS.teal : DS.s2, cursor: "pointer", position: "relative", transition: "background .2s" }}>
+              <div style={{ width: 16, height: 16, borderRadius: "50%", background: "#fff", position: "absolute", top: 2, left: toggled ? 18 : 2, transition: "left .2s", boxShadow: "0 1px 3px rgba(0,0,0,.1)" }} />
+            </div>
+          </div>
+          <button style={{ padding: "6px 14px", borderRadius: 8, fontSize: 12, fontWeight: 600, border: "none", background: DS.rose, color: "#fff", cursor: "pointer", fontFamily: FT, display: "flex", alignItems: "center", gap: 6 }}>
+            Start <span style={{ background: "rgba(255,255,255,.3)", padding: "1px 6px", borderRadius: 4, fontSize: 10 }}>2</span>
+          </button>
+        </div>
+        <div style={{ padding: 12, background: DS.s1, borderRadius: 8, border: "1px solid " + DS.bd }}>
+          <div style={{ fontSize: 10, fontWeight: 600, color: DS.t3, marginBottom: 6 }}>USAGE RULES</div>
+          <p style={{ fontSize: 11, color: DS.t2, lineHeight: 1.5, margin: 0 }}>Filter toolbar sits above the task feed. Active filters render as dismissible chips. The Start button shows a live count of selected/filtered items. Bulk edit toggle enables batch selection. Always include a way to clear all filters.</p>
+        </div>
+      </DSCard>
+    </div>;
+  }
+
+  // ── Component: Sidebar Module ──
+  if (dsSec === "comp-sidebar") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>Sidebar Module</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 16, lineHeight: 1.6 }}>Persistent contextual sidebar modules for location setup, automations, legislation, and resources.</p>
+      <DSCard anim mb={16}>
+        <div style={SH2}>Module Variants</div>
+        <div style={{ maxWidth: 320 }}>
+          {[
+            { title: "COMPLETE SETUP", items: [{ name: "Alaska", icon: "🏔" }, { name: "Arizona", icon: "🌵" }, { name: "Arkansas", icon: "🏛" }], more: "Show 31 more locations" },
+            { title: "AUTOMATIONS IN PROGRESS", items: [{ name: "Foreign Qualification", icon: "⚙" }] },
+            { title: "LEGISLATION", items: [{ name: "California Salary Transparency Compliance", sub: "Effective October 1, 2024" }, { name: "California AI Disclaimer Requirement", sub: "Effective October 1, 2024" }] },
+            { title: "EMPLOYEE RESOURCES", items: [{ name: "Handbook", sub: "Signed by 90% of employees" }, { name: "Labor Notices & Posters", sub: "Updated March 13, 2025" }] }
+          ].map(function(mod, mi) {
+            return <div key={mi} style={{ marginBottom: 16 }}>
+              <div style={{ fontSize: 10, fontWeight: 600, color: DS.t3, textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 8 }}>{mod.title}</div>
+              {mod.items.map(function(item, ii) {
+                return <div key={ii} style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 12px", background: "#fff", border: "1px solid " + DS.bd, borderRadius: 8, marginBottom: 4, cursor: "pointer", transition: "all .15s" }}
+                  onMouseEnter={function(e) { e.currentTarget.style.background = DS.s1; }}
+                  onMouseLeave={function(e) { e.currentTarget.style.background = "#fff"; }}>
+                  {item.icon && <span style={{ fontSize: 14 }}>{item.icon}</span>}
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 13, fontWeight: 500, color: DS.t1 }}>{item.name}</div>
+                    {item.sub && <div style={{ fontSize: 11, color: DS.t3, marginTop: 1 }}>{item.sub}</div>}
+                  </div>
+                  <span style={{ fontSize: 12, color: DS.t3 }}>›</span>
+                </div>;
+              })}
+              {mod.more && <button style={{ width: "100%", padding: "8px 0", background: DS.s1, border: "1px solid " + DS.bd, borderRadius: 8, fontSize: 11, color: DS.t3, cursor: "pointer", fontFamily: FT, marginTop: 4 }}>{mod.more}</button>}
+            </div>;
+          })}
+        </div>
+      </DSCard>
+    </div>;
+  }
+
+  // ── Component: Policy Banner ──
+  if (dsSec === "comp-banner") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>Policy Banner</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 16, lineHeight: 1.6 }}>Persistent top-of-feed banner prompting users to take action on policies.</p>
+      <DSCard anim mb={16}>
+        <div style={SH2}>Banner Demo</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 18px", background: "#fff", border: "1px solid " + DS.bd, borderRadius: 10, cursor: "pointer", transition: "all .2s", marginBottom: 16 }}
+          onMouseEnter={function(e) { e.currentTarget.style.boxShadow = "0 2px 8px rgba(45,31,26,.06)"; }}
+          onMouseLeave={function(e) { e.currentTarget.style.boxShadow = "none"; }}>
+          <div style={{ width: 32, height: 32, borderRadius: 8, background: DS.tealB, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, color: DS.teal }}>🏛</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, color: DS.t1 }}>Adopt employee policies</div>
+            <div style={{ fontSize: 12, color: DS.t2, marginTop: 2 }}>Add these policies to your handbook to stay compliant.</div>
+          </div>
+          <span style={{ fontSize: 16, color: DS.t3 }}>›</span>
+        </div>
+        <div style={{ padding: 12, background: DS.s1, borderRadius: 8, border: "1px solid " + DS.bd }}>
+          <div style={{ fontSize: 10, fontWeight: 600, color: DS.t3, marginBottom: 6 }}>USAGE RULES</div>
+          <p style={{ fontSize: 11, color: DS.t2, lineHeight: 1.5, margin: 0 }}>Place below the state filter bar and above the activity feed. One banner at a time. Include an icon, title, description, and chevron. The banner links to the relevant product experience (Handbook builder).</p>
+        </div>
+      </DSCard>
+    </div>;
+  }
+
+  // ── Component: Form Input ──
+  if (dsSec === "comp-input") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>Form Input</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 16, lineHeight: 1.6 }}>Text inputs, toggles, and form controls used in configuration and edit panels.</p>
+      <DSCard anim mb={16}>
+        <div style={SH2}>Input States</div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 600, color: DS.t2, marginBottom: 6 }}>Default</div>
+            <input type="text" placeholder="Enter value..." value={inputVal} onChange={function(e) { setInputVal(e.target.value); }}
+              style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: "1px solid " + DS.bd, fontSize: 13, fontFamily: FT, outline: "none", boxSizing: "border-box", transition: "border .15s" }}
+              onFocus={function(e) { e.target.style.borderColor = DS.teal; e.target.style.boxShadow = "0 0 0 3px " + DS.tealD; }}
+              onBlur={function(e) { e.target.style.borderColor = DS.bd; e.target.style.boxShadow = "none"; }} />
+          </div>
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 600, color: DS.t2, marginBottom: 6 }}>Disabled</div>
+            <input type="text" placeholder="Disabled..." disabled
+              style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: "1px solid " + DS.bd, fontSize: 13, fontFamily: FT, background: DS.s1, color: DS.t3, cursor: "not-allowed", boxSizing: "border-box" }} />
+          </div>
+        </div>
+        <div style={SH2}>Toggle</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+          <div onClick={function() { setToggled(!toggled); }} style={{ width: 40, height: 22, borderRadius: 11, background: toggled ? DS.teal : DS.s2, cursor: "pointer", position: "relative", transition: "background .2s" }}>
+            <div style={{ width: 18, height: 18, borderRadius: "50%", background: "#fff", position: "absolute", top: 2, left: toggled ? 20 : 2, transition: "left .2s cubic-bezier(.4,0,.2,1)", boxShadow: "0 1px 3px rgba(0,0,0,.1)" }} />
+          </div>
+          <span style={{ fontSize: 12, color: DS.t2 }}>{toggled ? "On" : "Off"}</span>
+        </div>
+      </DSCard>
+    </div>;
+  }
+
+  // ── Motion ──
+  if (dsSec === "motion") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>Motion & Animation</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 24, lineHeight: 1.6 }}>Platform 2.0 uses subtle, purposeful animation. Entrances guide the eye, hover transitions provide feedback, and continuous loops are reserved for live indicators.</p>
+
+      <div style={SH2}>Entrance Animations</div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 24 }}>
+        {[
+          ["fu — Fade Up", "opacity: 0 + translateY(12px) → visible", "0.45s ease-out", "Cards, sections, page content"],
+          ["fi — Fade In", "opacity: 0 → 1", "0.3s ease-out", "Expanded content, details"],
+          ["fadeScale", "opacity: 0 + scale(0.96) → visible", "0.4s ease-out", "Modals, popovers"]
+        ].map(function(anim, i) {
+          return <DSCard key={i} anim>
+            <div style={{ fontSize: 12, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>{anim[0]}</div>
+            <div style={{ fontSize: 10, color: DS.teal, fontFamily: MN, marginBottom: 4 }}>{anim[1]}</div>
+            <div style={{ fontSize: 10, color: DS.t3, marginBottom: 4 }}>Duration: {anim[2]}</div>
+            <div style={{ fontSize: 10, color: DS.t2 }}>Usage: {anim[3]}</div>
+          </DSCard>;
+        })}
+      </div>
+
+      <div style={SH2}>Hover Transitions</div>
+      <DSCard anim mb={24}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 10 }}>
+          {[
+            ["Buttons", "all", ".15s ease"],
+            ["Cards", "all", ".2s ease"],
+            ["Table rows", "background", ".12s ease"],
+            ["Progress bars", "width", ".6s ease"]
+          ].map(function(t, i) {
+            return <div key={i} style={{ padding: 10, background: DS.s1, borderRadius: 8, border: "1px solid " + DS.bd, textAlign: "center" }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: DS.t1, marginBottom: 4 }}>{t[0]}</div>
+              <div style={{ fontSize: 10, color: DS.teal, fontFamily: MN }}>{t[1]}</div>
+              <div style={{ fontSize: 10, color: DS.t3 }}>{t[2]}</div>
+            </div>;
+          })}
+        </div>
+      </DSCard>
+
+      <div style={SH2}>Continuous Animations</div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 24 }}>
+        <DSCard>
+          <div style={{ fontSize: 12, fontWeight: 600, color: DS.t1, marginBottom: 8 }}>gl — Glow</div>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 10 }}>
+            <div className="gl" style={{ width: 48, height: 48, borderRadius: "50%", background: DS.s1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ width: 10, height: 10, borderRadius: "50%", background: DS.rose }} />
+            </div>
+          </div>
+          <div style={{ fontSize: 10, color: DS.t3, textAlign: "center" }}>2s ease-in-out infinite — Active indicators</div>
+        </DSCard>
+        <DSCard>
+          <div style={{ fontSize: 12, fontWeight: 600, color: DS.t1, marginBottom: 8 }}>meshGrad — Background</div>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 10 }}>
+            <div style={{ width: 120, height: 48, borderRadius: 8, backgroundSize: "400% 400%", animation: "meshGrad 14s ease infinite", background: "linear-gradient(135deg,#FFF9F6 0%,#FFF0EB 25%,#FFF5F1 50%,#FFEDE7 75%,#FFF9F6 100%)" }} />
+          </div>
+          <div style={{ fontSize: 10, color: DS.t3, textAlign: "center" }}>14s ease infinite — Page backgrounds</div>
+        </DSCard>
+      </div>
+
+      <div style={SH2}>Staggered Entry</div>
+      <DSCard anim>
+        <p style={{ fontSize: 12, color: DS.t1, marginBottom: 12, lineHeight: 1.5 }}>Activity cards and list items use sequential animationDelay for cascading entrance:</p>
+        <div style={{ display: "flex", gap: 8 }}>
+          {[0, 1, 2, 3, 4].map(function(i) {
+            return <div key={i} className="fu" style={{ flex: 1, height: 32, background: DS.tealB, border: "1px solid " + DS.tealD, borderRadius: 6, animationDelay: i * 0.08 + "s", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: DS.teal, fontFamily: MN }}>{i * 80}ms</div>;
+          })}
+        </div>
+      </DSCard>
+    </div>;
+  }
+
+  // ── Layouts ──
+  if (dsSec === "layouts") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>Layout System</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 24, lineHeight: 1.6 }}>Platform 2.0 uses a two-panel layout with a vertical navigation sidebar, main content area, and contextual sidebar.</p>
+      <div style={SH2}>App Shell Structure</div>
+      <DSCard anim mb={24} style={{ padding: 20 }}>
+        <div style={{ display: "flex", border: "2px solid " + DS.teal, borderRadius: 10, overflow: "hidden", height: 200 }}>
+          <div style={{ width: 50, background: DS.s1, borderRight: "1px solid " + DS.bd, display: "flex", flexDirection: "column", alignItems: "center", paddingTop: 12, gap: 8 }}>
+            {["⊞", "◎", "◈", "⟁", "◧"].map(function(ic, i) { return <div key={i} style={{ fontSize: 12, color: i === 0 ? DS.rose : DS.t3 }}>{ic}</div>; })}
+          </div>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+            <div style={{ height: 28, background: DS.s1, borderBottom: "1px solid " + DS.bd, display: "flex", alignItems: "center", gap: 4, padding: "0 8px" }}>
+              {["All", "AL", "AK", "CA"].map(function(s, i) { return <span key={i} style={{ fontSize: 8, padding: "2px 6px", borderRadius: 10, background: i === 0 ? DS.teal : "#fff", color: i === 0 ? "#fff" : DS.t3, border: i > 0 ? "1px solid " + DS.bd : "none" }}>{s}</span>; })}
+            </div>
+            <div style={{ flex: 1, padding: 8, display: "flex", flexDirection: "column", gap: 4 }}>
+              <div style={{ fontSize: 8, fontWeight: 600, color: DS.t2, marginBottom: 2 }}>Recent Activity</div>
+              {[DS.amber, DS.green, DS.blue].map(function(c, i) { return <div key={i} style={{ height: 16, borderLeft: "2px solid " + c, background: DS.s1, borderRadius: "0 4px 4px 0", paddingLeft: 6, fontSize: 7, color: DS.t3, display: "flex", alignItems: "center" }}>Activity card</div>; })}
+            </div>
+          </div>
+          <div style={{ width: 100, background: DS.s1, borderLeft: "1px solid " + DS.bd, padding: 8 }}>
+            <div style={{ fontSize: 7, fontWeight: 600, color: DS.t3, marginBottom: 4 }}>SIDEBAR</div>
+            {["Complete Setup", "Automations", "Legislation"].map(function(s, i) { return <div key={i} style={{ fontSize: 7, color: DS.t2, padding: "3px 0", borderBottom: "1px solid " + DS.bd }}>{s}</div>; })}
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: 12, marginTop: 12, fontSize: 10 }}>
+          <span style={{ color: DS.teal, fontFamily: MN }}>Nav: 56px</span>
+          <span style={{ color: DS.teal, fontFamily: MN }}>Content: flex: 1</span>
+          <span style={{ color: DS.teal, fontFamily: MN }}>Sidebar: 280-320px</span>
+        </div>
+      </DSCard>
+      <div style={SH2}>Content Widths</div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+        {[
+          ["Side Navigation", "56px fixed, icon-only, flex-shrink: 0"],
+          ["Contextual Sidebar", "280-320px fixed, right-aligned"],
+          ["Main Content", "flex: 1, fills remaining space"],
+          ["Case Study Pages", "maxWidth: 900px, margin: 0 auto, padding: 28px 48px"]
+        ].map(function(w, i) {
+          return <DSCard key={i} anim>
+            <div style={{ fontSize: 12, fontWeight: 600, color: DS.t1, marginBottom: 4 }}>{w[0]}</div>
+            <div style={{ fontSize: 10, color: DS.teal, fontFamily: MN }}>{w[1]}</div>
+          </DSCard>;
+        })}
+      </div>
+    </div>;
+  }
+
+  // ── Navigation ──
+  if (dsSec === "navigation") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>Navigation</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 24, lineHeight: 1.6 }}>Platform 2.0 uses three navigation patterns: vertical sidebar, state filter bar, and breadcrumb-via-back.</p>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+        {[
+          ["Vertical Sidebar", "56px icon-only sidebar with 8 navigation items. Active item shows rose accent color. Collapses to icons only for maximum content width.", "Always visible"],
+          ["State Filter Bar", "Horizontal pill selector below the header. 'All' pill + individual state pills with overflow dropdown. Scopes both task feed and sidebar.", "Top of dashboard"],
+          ["Back Navigation", "Detail panels use a Back button instead of breadcrumbs. One level deep only. Back clears the detail overlay.", "Detail views"]
+        ].map(function(nav, i) {
+          return <DSCard key={i} anim>
+            <div style={{ fontSize: 13, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>{nav[0]}</div>
+            <p style={{ fontSize: 11, color: DS.t2, lineHeight: 1.5, margin: 0, marginBottom: 6 }}>{nav[1]}</p>
+            <div style={{ fontSize: 10, color: DS.teal, fontFamily: MN }}>{nav[2]}</div>
+          </DSCard>;
+        })}
+      </div>
+    </div>;
+  }
+
+  // ── Data Hierarchy ──
+  if (dsSec === "datahierarchy") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>Data Hierarchy</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 24, lineHeight: 1.6 }}>Platform 2.0 follows a four-level progressive disclosure pattern for data exploration.</p>
+      <div style={{ display: "flex", gap: 10, marginBottom: 24 }}>
+        {[
+          ["L1 — KPI Summary", "2-second status scan", "KPI cards in flex row"],
+          ["L2 — Activity Feed", "Chronological context", "Color-bordered cards"],
+          ["L3 — Task List", "Filterable detail", "Task rows with metadata"],
+          ["L4 — Sidebar Context", "Ambient awareness", "Persistent modules"]
+        ].map(function(l, i) {
+          return <DSCard key={i} anim style={{ flex: 1, borderTop: "2px solid " + DS.teal }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: DS.teal, marginBottom: 4 }}>{l[0]}</div>
+            <div style={{ fontSize: 11, color: DS.t1, marginBottom: 4 }}>{l[1]}</div>
+            <div style={{ fontSize: 10, color: DS.t3, fontFamily: MN }}>{l[2]}</div>
+          </DSCard>;
+        })}
+      </div>
+      <DSCard anim>
+        <div style={SH2}>Progressive Disclosure Flow</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "center", padding: "16px 0" }}>
+          {["KPI Scan", "→", "Activity Feed", "→", "Task Triage", "→", "Sidebar Context"].map(function(s, i) {
+            return i % 2 === 0
+              ? <div key={i} style={{ padding: "8px 14px", background: DS.tealB, border: "1px solid " + DS.tealD, borderRadius: 8, fontSize: 11, fontWeight: 600, color: DS.teal }}>{s}</div>
+              : <span key={i} style={{ fontSize: 14, color: DS.t3 }}>{s}</span>;
+          })}
+        </div>
+      </DSCard>
+    </div>;
+  }
+
+  // ── Feedback & States ──
+  if (dsSec === "feedback") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>Feedback & States</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 24, lineHeight: 1.6 }}>How Platform 2.0 communicates status, progress, and outcomes to operators.</p>
+      <div style={SH2}>Loading States</div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 24 }}>
+        <DSCard anim>
+          <div style={{ fontSize: 12, fontWeight: 600, color: DS.t1, marginBottom: 8 }}>Spinner</div>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
+            <div style={{ width: 24, height: 24, border: "3px solid " + DS.s2, borderTopColor: DS.teal, borderRadius: "50%", animation: "fu .7s linear infinite" }} />
+          </div>
+          <div style={{ fontSize: 10, color: DS.t3, textAlign: "center" }}>Inline loading</div>
+        </DSCard>
+        <DSCard anim>
+          <div style={{ fontSize: 12, fontWeight: 600, color: DS.t1, marginBottom: 8 }}>Skeleton</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <div style={{ height: 12, width: "80%", background: DS.s2, borderRadius: 4, animation: "fi 1.5s ease-in-out infinite alternate" }} />
+            <div style={{ height: 12, width: "60%", background: DS.s2, borderRadius: 4, animation: "fi 1.5s ease-in-out infinite alternate", animationDelay: "0.2s" }} />
+          </div>
+          <div style={{ fontSize: 10, color: DS.t3, textAlign: "center", marginTop: 8 }}>Content placeholder</div>
+        </DSCard>
+        <DSCard anim>
+          <div style={{ fontSize: 12, fontWeight: 600, color: DS.t1, marginBottom: 8 }}>Progress Bar</div>
+          <div style={{ height: 6, background: DS.s2, borderRadius: 3, overflow: "hidden", marginBottom: 8 }}>
+            <div style={{ width: "65%", height: "100%", background: DS.teal, borderRadius: 3, transition: "width .6s ease" }} />
+          </div>
+          <div style={{ fontSize: 10, color: DS.t3, textAlign: "center" }}>Multi-step processes</div>
+        </DSCard>
+      </div>
+      <div style={SH2}>Empty States</div>
+      <DSCard anim mb={24} style={{ textAlign: "center", padding: "32px 24px", border: "1px dashed " + DS.bd }}>
+        <div style={{ fontSize: 28, opacity: 0.3, marginBottom: 8 }}>📋</div>
+        <div style={{ fontSize: 13, fontWeight: 600, color: DS.t1, marginBottom: 4 }}>No tasks match your filters</div>
+        <div style={{ fontSize: 11, color: DS.t3, marginBottom: 12 }}>Try adjusting your filter criteria or clearing all filters.</div>
+        <DSBtn sm id="empty-clear">Clear filters</DSBtn>
+      </DSCard>
+    </div>;
+  }
+
+  // ── Usage Rules ──
+  if (dsSec === "usage") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>Usage Rules</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 24, lineHeight: 1.6 }}>Consolidated do's and don'ts for applying the design system consistently.</p>
+      {[
+        ["Color", [
+          ["Do", "Use semantic colors consistently: teal=active, green=complete, amber=warning, red=overdue"],
+          ["Do", "Use opacity variants (B suffix) at 6-8% for tinted backgrounds"],
+          ["Don't", "Use semantic foreground colors as background fills directly"],
+          ["Don't", "Mix severity meanings — amber for success, teal for errors"]
+        ]],
+        ["Typography", [
+          ["Do", "Use Outfit for all UI text — headers, body, labels, buttons"],
+          ["Do", "Use JetBrains Mono for dates, IDs, timestamps, and numeric data"],
+          ["Don't", "Go below 9px font size for any text"],
+          ["Don't", "Use font-weight 700 on body text — reserve bold for page titles"]
+        ]],
+        ["Components", [
+          ["Do", "Limit to one primary (teal/rose) button per visual group"],
+          ["Do", "Use 3px left borders on activity cards for status color lanes"],
+          ["Don't", "Nest cards more than one level deep"],
+          ["Don't", "Use badges for interactive elements — they're display-only"]
+        ]],
+        ["Motion", [
+          ["Do", "Use fu (fade-up) for cards and sections entering the viewport"],
+          ["Do", "Keep transition durations between 0.12s and 0.6s"],
+          ["Don't", "Apply continuous animations to more than 2 elements at once"],
+          ["Don't", "Animate elements that are already visible — entrances only"]
+        ]],
+        ["Layout", [
+          ["Do", "Use fixed widths for navigation (56px) and sidebar (280-320px)"],
+          ["Do", "Let the main content area flex to fill remaining space"],
+          ["Don't", "Use percentage widths for fixed panels"],
+          ["Don't", "Set overflow:auto on the root shell — only inner panels scroll"]
+        ]]
+      ].map(function(section, si) {
+        return <DSCard key={si} anim mb={12}>
+          <div style={SH2}>{section[0]}</div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+            {section[1].map(function(rule, ri) {
+              var isDo = rule[0] === "Do";
+              return <div key={ri} style={{ padding: 10, background: isDo ? DS.greenB : DS.redB, borderRadius: 8, border: "1px solid " + (isDo ? DS.greenD : DS.redD) }}>
+                <div style={{ fontSize: 10, fontWeight: 600, color: isDo ? DS.green : DS.red, marginBottom: 4 }}>{rule[0].toUpperCase()}</div>
+                <p style={{ fontSize: 11, color: DS.t2, lineHeight: 1.4, margin: 0 }}>{rule[1]}</p>
+              </div>;
+            })}
+          </div>
+        </DSCard>;
+      })}
+    </div>;
+  }
+
+  // ── Accessibility ──
+  if (dsSec === "accessibility") {
+    content = <div className="fu" style={{ maxWidth: "none" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>Accessibility</h2>
+      <p style={{ fontSize: 12, color: DS.t2, marginBottom: 24, lineHeight: 1.6 }}>Platform 2.0 follows WCAG 2.1 guidelines for color contrast, target sizing, and keyboard navigation.</p>
+
+      <div style={SH2}>Color Contrast Ratios</div>
+      <DSCard anim mb={24} style={{ padding: 0, overflow: "hidden" }}>
+        {[
+          ["t1 (#1A1D1F)", "White (#FFF)", "15.4:1", "AAA", "Primary text, headings"],
+          ["t2 (#6B6E70)", "White (#FFF)", "5.1:1", "AA", "Body text, descriptions"],
+          ["Teal (#36B5A0)", "White (#FFF)", "3.2:1", "AA Large", "Active states, links"],
+          ["Rose (#D4697A)", "White (#FFF)", "3.8:1", "AA Large", "CTA buttons (with white text)"],
+          ["Red (#C05050)", "White (#FFF)", "4.6:1", "AA", "Overdue status text"]
+        ].map(function(row, i) {
+          return <div key={i} style={{ display: "flex", alignItems: "center", padding: "10px 16px", borderBottom: "1px solid " + DS.bd, gap: 12 }}>
+            <div style={{ width: 140, fontSize: 11, color: DS.t1 }}>{row[0]}</div>
+            <div style={{ width: 100, fontSize: 11, color: DS.t3 }}>{row[1]}</div>
+            <div style={{ width: 60, fontSize: 11, fontWeight: 600, color: DS.teal, fontFamily: MN }}>{row[2]}</div>
+            <DSBadge type={row[3] === "AAA" ? "success" : row[3] === "AA" ? "active" : "warning"}>{row[3]}</DSBadge>
+            <div style={{ flex: 1, fontSize: 10, color: DS.t3 }}>{row[4]}</div>
+          </div>;
+        })}
+      </DSCard>
+
+      <div style={SH2}>Accessibility Principles</div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        {[
+          ["Color Is Not the Only Signal", "Every status communicated by color also uses text labels (badges), icons, or descriptive text. Status dots are always accompanied by labels."],
+          ["Minimum Target Sizing", "All interactive elements meet a 32px minimum touch target. Buttons use 7px 16px padding ensuring adequate click area."],
+          ["Keyboard Navigation", "All interactive elements use native HTML button elements. Tab order follows visual hierarchy: sidebar → filter bar → content → sidebar."],
+          ["Font Size Minimums", "9px is the minimum for chart labels. 10px for badges and metadata. 13px for default body text. Never below 9px."]
+        ].map(function(p, i) {
+          return <DSCard key={i} anim>
+            <div style={{ fontSize: 13, fontWeight: 600, color: DS.t1, marginBottom: 6 }}>{p[0]}</div>
+            <p style={{ fontSize: 11, color: DS.t2, lineHeight: 1.5, margin: 0 }}>{p[1]}</p>
+          </DSCard>;
+        })}
+      </div>
+    </div>;
+  }
+
+  return (
+    <div style={{ marginTop: 16 }}>
+      <div style={{ display: "flex", border: "1px solid " + DS.bd, borderRadius: 12, overflow: "hidden", background: DS.bg, height: 700 }}>
+        {/* Sidebar */}
+        <div style={{ width: 210, background: DS.wh, borderRight: "1px solid " + DS.bd, flexShrink: 0, overflow: "auto", padding: "16px 0" }}>
+          <div style={{ padding: "0 16px 14px", borderBottom: "1px solid " + DS.bd, marginBottom: 8 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <MoseyLogo size={16} />
+              <span style={{ fontSize: 13, fontWeight: 700, color: DS.t1, fontFamily: FT }}>Design System</span>
+            </div>
+            <div style={{ fontSize: 10, color: DS.t3, marginTop: 2, fontFamily: FT }}>Platform 2.0</div>
+          </div>
+          {DS_CATS.map(function(group) {
+            return <div key={group.cat || "top"} style={{ marginBottom: 4 }}>
+              {group.cat && <div style={{ fontSize: 10, fontWeight: 600, color: DS.t3, textTransform: "uppercase", letterSpacing: ".06em", padding: "8px 16px 4px", fontFamily: FT }}>{group.cat}</div>}
+              {group.items.map(function(item) {
+                var isA = dsSec === item.id;
+                return <div key={item.id} onClick={function() { setDsSec(item.id); }}
+                  onMouseEnter={function() { setNavHov(item.id); }}
+                  onMouseLeave={function() { setNavHov(null); }}
+                  style={{
+                    padding: group.cat ? "5px 16px 5px 22px" : "5px 16px",
+                    fontSize: 11, fontWeight: isA ? 600 : 400,
+                    color: isA ? C.ro : navHov === item.id ? DS.t1 : DS.t2,
+                    background: isA ? DS.roseB : navHov === item.id ? DS.bg : "transparent",
+                    borderRight: isA ? "2px solid " + C.ro : "2px solid transparent",
+                    cursor: "pointer", transition: "all 0.15s", fontFamily: FT
+                  }}>
+                  {item.la}
+                </div>;
+              })}
+            </div>;
+          })}
+        </div>
+        {/* Content */}
+        <div style={{ flex: 1, overflow: "auto", padding: "20px 28px 0" }}>
+          {content}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Platform2CaseStudy() {
   var _s1 = useState("Interface");
   var activeTab = _s1[0]; var setActiveTab = _s1[1];
@@ -149,7 +1463,7 @@ export default function Platform2CaseStudy() {
     });
   }
 
-  var TABS = ["Interface","Overview","Value of Design","Design Process","AI-Native","Tech Stack"];
+  var TABS = ["Interface","Overview","Value of Design","Design Process","AI-Native","Design System","Tech Stack"];
   var SUBTABS = ["20/60/20","Information Architecture","User Journeys","Steps"];
 
   function tabBtn(label, isActive, onClick, small) {
@@ -168,7 +1482,7 @@ export default function Platform2CaseStudy() {
 
       <a href="https://designsbytulcy.weebly.com/mosey-platform-2.html" style={{ position: "fixed", top: 20, left: 20, zIndex: 100, display: "flex", alignItems: "center", gap: 5, padding: "7px 14px", borderRadius: 20, background: "rgba(255,255,255,.85)", backdropFilter: "blur(12px)", border: "1px solid " + C.bd, color: C.t1, fontSize: 12, fontWeight: 600, fontFamily: FT, textDecoration: "none", boxShadow: "0 2px 8px rgba(45,31,26,.08)", transition: "all .2s" }}><span style={{ fontSize: 14, lineHeight: 1 }}>←</span> Back</a>
 
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "28px 48px 60px", fontFamily: FT }}>
+      <div style={{ maxWidth: activeTab === "Design System" ? 1200 : 900, margin: "0 auto", padding: "28px 48px 60px", fontFamily: FT, transition: "max-width .3s ease" }}>
 
         <div className="fu" style={{ display: "flex", justifyContent: "center", gap: 6, marginBottom: 28 }}>
           {[["Portfolio", "https://designsbytulcy.weebly.com"], ["Resume", "https://drive.google.com/file/d/1dvnaJaTdTq2Esx_BNRYnpLAZjJgwRk79/view?usp=sharing"], ["LinkedIn", "https://www.linkedin.com/in/tulcypatel"]].map(function(l) { return <a key={l[0]} href={l[1]} target="_blank" rel="noopener noreferrer" style={{ padding: "5px 14px", borderRadius: 6, background: C.ro, color: "#fff", fontSize: 11, fontWeight: 600, textDecoration: "none", fontFamily: FT }}>{l[0]}</a>; })}
@@ -248,6 +1562,10 @@ export default function Platform2CaseStudy() {
 
         {activeTab === "Tech Stack" && (
           <Card anim glass mb={20} style={{ marginTop: 24 }}><div style={SL}>Tech Stack</div><div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 14 }}>{["Perplexity", "Claude Code", "Cursor", "Paper Design", "Figma", "Figma MCP", "Git", "Slack"].map(function(t) { return <span key={t} style={{ padding: "5px 11px", borderRadius: 6, background: "rgba(255,255,255,.55)", border: "1px solid " + C.s2, fontSize: 11, fontWeight: 500, color: C.t2 }}>{t}</span>; })}</div><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>{TECH_STACK.map(function(t) { return <div key={t.phase} style={{ padding: 12, background: "rgba(255,255,255,.5)", borderRadius: 8, border: "1px solid " + C.s2 }}><div style={{ fontSize: 12, fontWeight: 600, color: C.ro, marginBottom: 4 }}>{t.phase}</div><div style={{ fontSize: 11, fontWeight: 500, color: C.nv, marginBottom: 4, fontFamily: MN }}>{t.tools}</div><p style={{ fontSize: 11, color: C.t3, lineHeight: 1.5, margin: 0 }}>{t.desc}</p></div>; })}</div></Card>
+        )}
+
+        {activeTab === "Design System" && (
+          <DesignSystemPage />
         )}
 
         {/* ── Design Process sub-tabs ── */}
